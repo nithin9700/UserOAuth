@@ -43,7 +43,4 @@ public class UserController {
     public ResponseEntity<Boolean> validate(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(userService.validate(token));
     }
-
-
-
 }
