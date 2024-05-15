@@ -24,7 +24,7 @@ public class UserController {
         if(userSignUpRequestDTO == null){
             new NoDetailsException("Please provide the details");
         }
-        return null;
+        return ResponseEntity.ok(userService.signIn(userSignUpRequestDTO));
     }
 
     @PostMapping("/login")
@@ -32,16 +32,16 @@ public class UserController {
         if(userLoginRequestDTO == null){
             new NoDetailsException("Please provide the details");
         }
-        return null;
+        return ResponseEntity.ok(userService.login(userLoginRequestDTO));
     }
     @GetMapping("/logout")
-    public ResponseEntity<UserResponseDTO> logout() {
-        return null;
+    public ResponseEntity<Boolean> logout(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(userService.logout(token));
     }
 
     @GetMapping("/validate")
-    public ResponseEntity<UserResponseDTO> validate() {
-        return null;
+    public ResponseEntity<Boolean> validate(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(userService.validate(token));
     }
 
 

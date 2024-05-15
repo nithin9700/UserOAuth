@@ -10,4 +10,7 @@ import org.springframework.stereotype.Service;
 public interface UserService {
     UserResponseDTO signIn(UserSignUpRequestDTO userSignUpRequestDTO);
     UserResponseDTO login(UserLoginRequestDTO loginRequestDTO);
+    boolean validate(String token);
+    boolean logout(String token);
+
 }

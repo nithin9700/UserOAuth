@@ -19,5 +19,6 @@ public class User extends BaseModel {
     private String phoneNumber;
     @ManyToMany
     private List<Role> roles;
+    private String token;
 
 }

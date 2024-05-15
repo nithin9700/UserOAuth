@@ -6,10 +6,10 @@ import org.springframework.jdbc.UncategorizedSQLException;
 
 import java.util.List;
 
-public record UserResponseDTO(String name, String email, List<Role> roles) {
+public record UserResponseDTO(String name, String email, List<Role> roles, String phone, String token) {
     public static UserResponseDTO fromUser(User user) {
         UserResponseDTO userResponseDTO = new UserResponseDTO(
-                user.getUsername(), user.getEmail(), user.getRoles());
+                user.getUsername(), user.getEmail(), user.getRoles(), user.getPhoneNumber(), user.getToken());
         return userResponseDTO;
     }
 }
