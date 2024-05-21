@@ -19,6 +19,11 @@ public class UserController {
     @Qualifier("UserServiceImp")
     private UserService userService;
 
+    @GetMapping
+    public String home() {
+        return "index.html";
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<UserResponseDTO> signup(@NotNull @RequestBody UserSignUpRequestDTO userSignUpRequestDTO) {
         if(userSignUpRequestDTO == null){
