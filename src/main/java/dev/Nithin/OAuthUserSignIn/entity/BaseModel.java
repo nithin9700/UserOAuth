@@ -9,9 +9,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 @Setter
@@ -25,4 +27,7 @@ public abstract class BaseModel{
     private Instant createdAt;
     @UpdateTimestamp
     private Instant updatedAt;
+    @CreatedDate
+    private Date date;
 }
+
