@@ -2,7 +2,8 @@ package dev.Nithin.OAuthUserSignIn.service;
 
 import dev.Nithin.OAuthUserSignIn.DTO.RoleDTO;
 import dev.Nithin.OAuthUserSignIn.DTO.RoleRequestDTO;
+import org.springframework.http.ResponseEntity;
 
 public interface RoleService {
-    RoleDTO createRole(RoleRequestDTO  roleRequestDTO);
+    ResponseEntity<RoleDTO> createRole(RoleRequestDTO  roleRequestDTO);
 }
