@@ -11,7 +11,7 @@ public record UserLoginRequestDTO (String email, String password){
 
     public static User fromUserLoginRequestDTO(UserLoginRequestDTO loginRequestDTO) {
         User user = new User();
-        user.setEmail(loginRequestDTO.email);
+        user.setEmail(loginRequestDTO.email.toLowerCase());
         user.setPassword(loginRequestDTO.password);
         return user;
     }
