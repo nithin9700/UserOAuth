@@ -118,5 +118,4 @@ public class AuthServiceImp implements AuthService {
                 .signWith(SignatureAlgorithm.HS256, token)
                 .compact();
     }
-
 }
