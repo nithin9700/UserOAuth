@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -50,8 +51,10 @@ public class AuthController {
 
 
     @GetMapping("/validate")
-    public ResponseEntity<Void> validate(@RequestParam("id") UUID userId, @RequestHeader("Authorization") String token) {
-        return authService.validate(token, userId);
+    public ResponseEntity<Void> validate(@RequestHeader("Authorization") String token) {
+        ResponseEntity response = authService.validate(token);
+        return response;
+
     }
 }
 /*

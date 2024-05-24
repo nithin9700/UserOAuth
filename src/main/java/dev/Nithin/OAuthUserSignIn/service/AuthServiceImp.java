@@ -12,12 +12,13 @@ import dev.Nithin.OAuthUserSignIn.exception.UserNotFoundException;
 import dev.Nithin.OAuthUserSignIn.exception.WrongPasswordException;
 import dev.Nithin.OAuthUserSignIn.repository.SessionRepository;
 import dev.Nithin.OAuthUserSignIn.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.MultiValueMapAdapter;
 
@@ -28,17 +29,23 @@ import java.util.*;
 @Service("AuthServiceImp")
 public class AuthServiceImp implements AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private SessionRepository sessionRepository;
 
+    private final String token = "moQBiPOBshRymddqazlugBEsRMzcxcmLuy4NIJEWVzf3MnObFojNRel2mtl3pn";
+    private final UserRepository userRepository;
+    private final SessionRepository sessionRepository;
+    private final PasswordEncoder passwordEncoder;
+
+
+    public AuthServiceImp(UserRepository userRepository, SessionRepository sessionRepository,PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.sessionRepository = sessionRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public ResponseEntity<UserResponseDTO> signIn(UserSignUpRequestDTO userSignUpRequestDTO) {
         User user = UserSignUpRequestDTO.fromUserRequestDTO(userSignUpRequestDTO);
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setIsActive(true);
         userRepository.save(user);
         return new ResponseEntity<>(UserResponseDTO.fromUser(userRepository.save(user)), HttpStatus.CREATED);
@@ -46,41 +53,35 @@ public class AuthServiceImp implements AuthService {
 
     @Override
     public ResponseEntity<UserResponseDTO> login(UserLoginRequestDTO loginRequestDTO) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
         Optional<User> userOptional = userRepository.findByEmail(loginRequestDTO.email());
         if(userOptional.isEmpty()) {
             throw new UserNotFoundException("Email is not registered! please signup");
         }
-        if(!encoder.matches(loginRequestDTO.password(), userOptional.get().getPassword())) {
+        if(!passwordEncoder.matches(loginRequestDTO.password(), userOptional.get().getPassword())) {
             throw new WrongPasswordException("Wrong password!");
         }
-        User user = UserLoginRequestDTO.fromUserLoginRequestDTO(loginRequestDTO);
         User userDetails = userOptional.get();
-        String token = userDetails.getEmail() + userDetails.getPassword() + 256;
+        String token = generateToken(userDetails);
         Session session = new Session();
         session.setToken(token);
         session.setUser(userDetails);
         session.setSessionStatus(SessionStatus.ACTIVE);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime newDate = now.plusDays(10);
-        Date date = Date.from(newDate.atZone(ZoneId.systemDefault()).toInstant());
-        session.setExpiryDate(date);
+        session.setExpiryDate(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10));
         sessionRepository.save(session);
-
         MultiValueMap<String, String> claims = new MultiValueMapAdapter<>(new HashMap<>());
         claims.add("AUTH_TOKEN", token);
         ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(
                 UserResponseDTO.fromUser(userDetails),
                 claims,
                 HttpStatus.OK
+
         );
         return response;
     }
 
     @Override
-    public ResponseEntity<Void> validate(String token, UUID userId) {
-        Optional<Session>  OptionalSession = sessionRepository.findByTokenAndUserId(token, userId);
+    public ResponseEntity validate(String token) {
+        Optional<Session>  OptionalSession = sessionRepository.findByToken(token);
         if(OptionalSession.isEmpty()){
             throw  new InvalidCredentialException("Token is Invalid");
         }
@@ -92,7 +93,7 @@ public class AuthServiceImp implements AuthService {
         if(session.getExpiryDate().getTime() < System.currentTimeMillis()){
             throw new InvalidCredentialException("Token has Expired");
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(true,HttpStatus.OK);
     }
 
     @Override
@@ -105,5 +106,17 @@ public class AuthServiceImp implements AuthService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    public String generateToken(User user) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + 3600000); // Token expires in 1 hour
+
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("userId", user.getId())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS256, token)
+                .compact();
+    }
 
 }

@@ -13,6 +13,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -24,10 +25,9 @@ public abstract class BaseModel{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
     @UpdateTimestamp
-    private Instant updatedAt;
-    @CreatedDate
-    private Date date;
+    private LocalDate updatedAt;
+
 }
 

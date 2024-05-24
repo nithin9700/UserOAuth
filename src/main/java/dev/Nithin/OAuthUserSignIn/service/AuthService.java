@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface AuthService {
     ResponseEntity<UserResponseDTO> signIn(UserSignUpRequestDTO userSignUpRequestDTO);
     ResponseEntity<UserResponseDTO> login(UserLoginRequestDTO loginRequestDTO);
-    ResponseEntity<Void> validate(String token, UUID userId);
+    ResponseEntity<Void> validate(String token);
     ResponseEntity<Void> logout(String token, UUID userId);
 
 }

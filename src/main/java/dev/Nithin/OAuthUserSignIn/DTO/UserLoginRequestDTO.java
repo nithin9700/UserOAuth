@@ -1,9 +1,6 @@
 package dev.Nithin.OAuthUserSignIn.DTO;
 
 import dev.Nithin.OAuthUserSignIn.entity.User;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.web.service.annotation.GetExchange;
 
 
 
