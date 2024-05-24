@@ -1,4 +1,4 @@
-package dev.Nithin.OAuthUserSignIn.security;
+package dev.Nithin.OAuthUserSignIn.security.model;
 
 import dev.Nithin.OAuthUserSignIn.entity.Role;
 import dev.Nithin.OAuthUserSignIn.entity.User;
@@ -6,7 +6,6 @@ import dev.Nithin.OAuthUserSignIn.security.services.CustomGrantedAuthority;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

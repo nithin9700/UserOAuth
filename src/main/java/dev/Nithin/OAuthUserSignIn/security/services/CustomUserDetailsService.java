@@ -2,8 +2,7 @@ package dev.Nithin.OAuthUserSignIn.security.services;
 
 import dev.Nithin.OAuthUserSignIn.entity.User;
 import dev.Nithin.OAuthUserSignIn.repository.UserRepository;
-import dev.Nithin.OAuthUserSignIn.security.CustomUserDetails;
-import org.springframework.beans.factory.annotation.Autowired;
+import dev.Nithin.OAuthUserSignIn.security.model.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
