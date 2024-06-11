@@ -13,8 +13,7 @@ import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
 
-    private User user;
-    private CustomGrantedAuthority customGrantedAuthority;
+    private final User user;
 
     public CustomUserDetails(User user) {
         this.user = user;

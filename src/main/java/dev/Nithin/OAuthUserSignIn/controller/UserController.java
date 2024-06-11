@@ -13,10 +13,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @GetMapping("/{id}")
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("{id}")
     public ResponseEntity<UserResponseDTO> getUserDetails(@RequestParam UUID id) {
         return userService.getUserDetails(id);
     }
