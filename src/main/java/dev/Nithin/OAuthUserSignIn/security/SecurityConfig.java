@@ -93,7 +93,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .anyRequest().permitAll()
                 )
-                .formLogin(Customizer.withDefaults());
+                .formLogin(Customizer.withDefaults()).csrf().disable();
 
 
         return http.build();

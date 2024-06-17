@@ -63,7 +63,7 @@ public class AuthServiceImp implements AuthService {
     public ResponseEntity<UserResponseDTO> login(UserLoginRequestDTO loginRequestDTO) {
         Optional<User> userOptional = userRepository.findByEmail(loginRequestDTO.email());
         if(userOptional.isEmpty()) {
-            throw new UserNotFoundException("Email is not registered! please signup");
+            throw new UserNotFoundException("Email is not registered! please signup\n");
         }
         if(!passwordEncoder.matches(loginRequestDTO.password(), userOptional.get().getPassword())) {
             throw new WrongPasswordException("Wrong password!");
@@ -78,7 +78,7 @@ public class AuthServiceImp implements AuthService {
 //                HttpStatus.OK
 //
 //        );
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<>(UserResponseDTO.fromUser(userOptional.get()),HttpStatus.NOT_IMPLEMENTED);
     }
 
     @Override
