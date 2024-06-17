@@ -9,9 +9,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 @Setter
@@ -22,7 +25,9 @@ public abstract class BaseModel{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
     @UpdateTimestamp
-    private Instant updatedAt;
+    private LocalDate updatedAt;
+
 }
+
