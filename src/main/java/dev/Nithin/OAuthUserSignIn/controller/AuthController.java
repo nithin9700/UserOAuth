@@ -47,8 +47,8 @@ public class AuthController {
 
 
     @GetMapping("/validate")
-    public ResponseEntity<Void> validate(@RequestHeader("Authorization") String token,@RequestParam("id") UUID userId) {
-        ResponseEntity response = authService.validate(token, userId);
+    public ResponseEntity<Void> validate(@RequestHeader("Authorization") String token) {
+        ResponseEntity response = authService.validate(token);
         return response;
 
     }

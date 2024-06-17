@@ -1,4 +1,4 @@
-package dev.Nithin.OAuthUserSignIn.security.services;
+package dev.Nithin.OAuthUserSignIn.security.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import dev.Nithin.OAuthUserSignIn.entity.Role;
@@ -9,14 +9,13 @@ import org.springframework.security.core.GrantedAuthority;
 @JsonDeserialize
 @NoArgsConstructor
 public class CustomGrantedAuthority implements GrantedAuthority {
-
-    private String authority;
+    private String role;
     public CustomGrantedAuthority(Role role) {
-        this.authority = role.getName();
+        this.role = role.getName();
     }
 
     @Override
     public String getAuthority() {
-        return this.authority;
+        return this.role;
     }
 }

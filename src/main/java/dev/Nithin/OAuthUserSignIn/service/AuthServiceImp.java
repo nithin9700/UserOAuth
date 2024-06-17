@@ -1,6 +1,5 @@
 package dev.Nithin.OAuthUserSignIn.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.Nithin.OAuthUserSignIn.DTO.UserLoginRequestDTO;
 import dev.Nithin.OAuthUserSignIn.DTO.UserResponseDTO;
@@ -9,15 +8,14 @@ import dev.Nithin.OAuthUserSignIn.client.KafkaProducerClient;
 import dev.Nithin.OAuthUserSignIn.entity.Session;
 import dev.Nithin.OAuthUserSignIn.entity.SessionStatus;
 import dev.Nithin.OAuthUserSignIn.entity.User;
-import dev.Nithin.OAuthUserSignIn.exception.InvalidCredentialException;
 import dev.Nithin.OAuthUserSignIn.exception.UserNotFoundException;
 import dev.Nithin.OAuthUserSignIn.exception.WrongPasswordException;
 import dev.Nithin.OAuthUserSignIn.repository.SessionRepository;
 import dev.Nithin.OAuthUserSignIn.repository.UserRepository;
 import dev.Nithin.OAuthUserSignIn.utiles.TokenManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -27,22 +25,22 @@ import java.util.*;
 @Service("AuthServiceImp")
 public class AuthServiceImp implements AuthService {
 
-    private final UserRepository userRepository;
-    private final SessionRepository sessionRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final KafkaProducerClient kafkaProducerClient;
-    private final ObjectMapper objectMapper;
-    private final TokenManager tokenManager;
+    private UserRepository userRepository;
+    private SessionRepository sessionRepository;
+    private PasswordEncoder passwordEncoder;
+    private KafkaProducerClient kafkaProducerClient;
+    private ObjectMapper objectMapper;
+    @Autowired
+    private TokenManager tokenManager;
 
 
     public AuthServiceImp(UserRepository userRepository, SessionRepository sessionRepository,PasswordEncoder passwordEncoder,
-                          KafkaProducerClient kafkaProducerClient, ObjectMapper objectMapper, TokenManager tokenManager) {
+                          KafkaProducerClient kafkaProducerClient, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
         this.passwordEncoder = passwordEncoder;
         this.kafkaProducerClient = kafkaProducerClient;
         this.objectMapper = objectMapper;
-        this.tokenManager = tokenManager;
     }
 
     @Override
@@ -52,12 +50,12 @@ public class AuthServiceImp implements AuthService {
         user.setIsActive(true);
         userRepository.save(user);
         UserResponseDTO userResponseDTO = UserResponseDTO.fromUser(userRepository.save(user));
-        try {
-            kafkaProducerClient.sendMessage("sendMail", objectMapper.writeValueAsString(userResponseDTO));
-        }
-        catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            kafkaProducerClient.sendMessage("sendMail", objectMapper.writeValueAsString(userResponseDTO));
+//        }
+//        catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
         return new ResponseEntity<>(userResponseDTO, HttpStatus.CREATED);
     }
 
@@ -70,26 +68,26 @@ public class AuthServiceImp implements AuthService {
         if(!passwordEncoder.matches(loginRequestDTO.password(), userOptional.get().getPassword())) {
             throw new WrongPasswordException("Wrong password!");
         }
-        User userDetails = userOptional.get();
-        String token = tokenManager.getToken(userDetails);
-        MultiValueMap<String, String> claims = new MultiValueMapAdapter<>(new HashMap<>());
-        claims.add("AUTH_TOKEN", token);
-        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(
-                UserResponseDTO.fromUser(userDetails),
-                claims,
-                HttpStatus.OK
-
-        );
-        return response;
+//        User userDetails = userOptional.get();
+//        String token = tokenManager.getToken(userDetails);
+//        MultiValueMap<String, String> claims = new MultiValueMapAdapter<>(new HashMap<>());
+//        claims.add("AUTH_TOKEN", token);
+//        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(
+//                UserResponseDTO.fromUser(userDetails),
+//                claims,
+//                HttpStatus.OK
+//
+//        );
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @Override
-    public ResponseEntity<Boolean> validate(String token, UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        boolean status = tokenManager.validateJwtToken(token, user);
-        if(status){
-            return new ResponseEntity<>(true,HttpStatus.OK);
-        }
+    public ResponseEntity<Boolean> validate(String token) {
+//        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+//        //boolean status = tokenManager.validateJwtToken(token, user);
+//        if(status){
+//            return new ResponseEntity<>(true,HttpStatus.OK);
+//        }
         return new ResponseEntity<>(false,HttpStatus.BAD_REQUEST);
     }
 
